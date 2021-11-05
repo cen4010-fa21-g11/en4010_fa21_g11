@@ -1,51 +1,66 @@
 <?php
-  require '../c.php';
-  require '../validation.php';
+  require '../../c.php';
+  require '../../validation.php';
 
   header('Content-type: application/json');
 
-  if (!isset($_POST) || !isset($_POST['user'])) {
+  $json = file_get_contents('php://input');
+
+  if (empty($json)) {
     InvalidUserInput();
   }
 
-  $user = json_decode($_POST['user'], TRUE, 10);
+  $json = json_decode($json);
+  if (empty($json->user)) {
+    InvalidUserInput();
+  }
 
-  if (empty($user)) {
+  $user = $json->user;
+  
+  if (empty($user->firstname) || empty($user->lastname) || empty($user->username) || empty($user->email) || empty($user->password)) {
     InvalidUserInput();
   }
 
   // Returns error to user upon failing any of the checks
-  ValidateFirstName($user['firstname']);
-  ValidateLastName($user['lastname']);
-  ValidateUserName($user['username']);
-  ValidateEmail($user['email']);
-  ValidatePassword($user['password']);
+  ValidateFirstName($user->firstname);
+  ValidateLastName($user->lastname);
+  ValidateUserName($user->username);
+  ValidateEmail($user->email);
+  ValidatePassword($user->password);
 
-  $hashedPassword = password_hash($user['password'], PASSWORD_BCRYPT);
+  $hashedPassword = password_hash($user->password, PASSWORD_BCRYPT);
   $userID = uniqid();
-  $email = strtolower($user['email']);
-  $firstName = strtolower($user['firstname']);
-  $lastName = strtolower($user['lastname']);
-  $userName = strtolower($user['username']);
+  $email = $user->email;
+  $firstName = $user->firstname;
+  $lastName = $user->lastname;
+  $userName = $user->username;
 
   $conn = new mysqli($server, $username, $pwd, $db);
 
   if ($conn->connect_error) {
     http_response_code(500);
-    echo json_encode(array('error' => "Internal Server Error"));
+    exit(json_encode(array('error' => TRUE, 'message' => "Internal Server Error")));
   }
 
-  if (UserNameAlreadyInUse($conn, $userName)) {
+  $sessionToken = GetRandomString(30);
+  $query = sprintf("INSERT INTO users (firstname, lastname, id, email, password, username, cookie) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($firstName), $conn->real_escape_string($lastName), $conn->real_escape_string($userID), $conn->real_escape_string($email), $conn->real_escape_string($hashedPassword), $conn->real_escape_string($userName), $sessionToken);
 
+  $res = $conn->query($query);
+
+  //error in inserting the new user
+  if ($res == FALSE) {
+    InvalidUserInput();
   }
 
-  $query = sprintf("INSERT INTO users (firstname, lastname, id, email, password, username) VALUES (%s, %s, %s, %s, %s)", $conn->real_escape_string($firstName), $conn->real_escape_string($lastName), $conn->real_escape_string($userID), $conn->real_escape_string($email), $conn->real_escape_string($hashedPassword), $conn->real_escape_string($userName));
+  setcookie('email', $email, time() + 604800, "/~cen4010_fa21_g11/", "lamp.cse.fau.edu", TRUE);
+  setcookie('session_token', $sessionToken, time() + 604800, "/~cen4010_fa21_g11/", "lamp.cse.fau.edu", TRUE);
 
-  
-
-
-
-
-
-
+  echo json_encode(array('error' => FALSE, array(
+    'email' => $email,
+    'username' => $userName,
+    'firstname' => $firstName,
+    'lastname' => $lastName,
+    'id' => $userID,
+  )));
+  $conn->close();
 ?>
