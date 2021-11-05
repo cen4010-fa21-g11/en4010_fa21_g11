@@ -14,10 +14,10 @@ function NavBar({ user }) {
 
   //for testing when user is logged in
   let devUser = {
-    firstName: "carter",
-    lastName: "sellgren",
-    email: "csellgren2019@fau.edu",
-    username: "carbyte",
+    firstName: "TempUser",
+    lastName: "LastName Temp user",
+    email: "tempuser@somehting.edu",
+    username: "temp_user",
     verified: true
   }
 
