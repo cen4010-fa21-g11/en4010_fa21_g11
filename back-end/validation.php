@@ -1,10 +1,10 @@
 <?php
+  require 'c.php';
 
   function InvalidUserInput() {
     http_response_code(400);
-    exit(json_encode(array('error' => "Invalid User Input")));
+    exit(json_encode(array('error' => TRUE, 'message' => "Invalid user input")));
   }
-
 
   function ValidateName($name) {
     $len = strlen($name);
@@ -32,11 +32,11 @@
 
   function ValidateUserName($userName) {
     $len = strlen($userName);
-    if ($len < 3) {
+    if ($len < 3 || $len > 25) {
       InvalidUserInput();
     }
     for ($i = 0; $i < $len; $i++) {
-      if (!ctype_alpha($userName[$i]) && !ctype_digit($userName[$i])) {
+      if (!ctype_alpha($userName[$i]) && !ctype_digit($userName[$i]) && $userName[$i] != '_') {
         InvalidUserInput();
       }
     }
@@ -44,7 +44,7 @@
 
 
   function ValidateEmail($email) {
-    if (empty($email) || !is_string($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (empty($email) || !is_string($email) || strlen($email) > 50 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
       InvalidUserInput();
     }
     $email = strtolower($email);
@@ -66,7 +66,6 @@
     }
 
     $len = strlen($password);
-    $has_char = FALSE;
     $has_digit = FALSE;
     $has_up = FALSE;
     $has_low = FALSE;
@@ -82,21 +81,36 @@
         else {
           $has_up = TRUE;
         }
-        $has_char = TRUE;
       }
     }
 
-    if (!$has_char || !$has_digit || !$has_low || !$has_up) {
+    if (!$has_digit || !$has_low || !$has_up) {
       InvalidUserInput();
     }
   }
 
+  function ValidateUserSession($userID, $session_token) {
+    $conn = new mysqli($server, $username, $pwd, $db);
+    if ($conn->connect_error) {
+      return FALSE;
+    }
 
+    $query = sprintf("SELECT 1 FROM users WHERE cookie='%s' AND id='%s'", $conn->real_escape_string($session_token), $conn->real_escape_string($userID));
+    $res = $conn->query($query);
 
-  function UserNameAlreadyInUse($conn, $userName) {
-    
+    $conn->close();
+    return $res != FALSE;
   }
 
+  function GetRandomString($len) {
+    $chars = "abcdefghijklmnopqrstuvwzyz0123456789";
+    $l = strlen($chars) - 1;
+    $res = "";
+    for ($i = 0; $i < $len; $i++) {
+      $res .= $chars[mt_rand(0, $l)];
+    }
+    return $res;
+  }
 
 
 
