@@ -17,15 +17,15 @@ function Router() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/signup" render={_ => <SignUpPage user={userInfo} loginUser={changeUserInfo} />} />
-        <Route path="/login" render={_ => <LoginPage user={userInfo} loginUser={changeUserInfo} />} />
-        <Route path="/posts" render={_ => {
+        <Route path="/~cen4010_fa21_g11/project/signup" render={_ => <SignUpPage user={userInfo} loginUser={changeUserInfo} />} />
+        <Route path="/~cen4010_fa21_g11/project/login" render={_ => <LoginPage user={userInfo} loginUser={changeUserInfo} />} />
+        <Route path="/~cen4010_fa21_g11/project/posts" render={_ => {
           if (userLoggedIn()) {
             return <PostsPage user={userInfo} />
           }
-          return <Redirect to="/login" />
+          return <Redirect to="/~cen4010_fa21_g11/project/login" />
         }} />
-        <Route path="/" render={_ => <HomePage user={userInfo} />} />
+        <Route path="/~cen4010_fa21_g11/project/" render={_ => <HomePage user={userInfo} />} />
       </Switch>
     </BrowserRouter>
   );

@@ -11,7 +11,7 @@
   }
 
   $json = json_decode($json);
-  if (empty($json->user)) {
+  if (empty($json) || empty($json->user)) {
     InvalidUserInput();
   }
 
@@ -34,6 +34,8 @@
   $firstName = $user->firstname;
   $lastName = $user->lastname;
   $userName = $user->username;
+  $collegeid = explode("@", $user->email)[1];
+  $collegeid = explode(".", $collegeid)[0];
 
   $conn = new mysqli($server, $username, $pwd, $db);
 
@@ -43,7 +45,7 @@
   }
 
   $sessionToken = GetRandomString(30);
-  $query = sprintf("INSERT INTO users (firstname, lastname, id, email, password, username, cookie) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($firstName), $conn->real_escape_string($lastName), $conn->real_escape_string($userID), $conn->real_escape_string($email), $conn->real_escape_string($hashedPassword), $conn->real_escape_string($userName), $sessionToken);
+  $query = sprintf("INSERT INTO users (firstname, lastname, id, email, password, username, cookie, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($firstName), $conn->real_escape_string($lastName), $conn->real_escape_string($userID), $conn->real_escape_string($email), $conn->real_escape_string($hashedPassword), $conn->real_escape_string($userName), $sessionToken, $conn->real_escape_string($collegeid));
 
   $res = $conn->query($query);
 

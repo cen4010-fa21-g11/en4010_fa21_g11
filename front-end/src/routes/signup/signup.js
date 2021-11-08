@@ -4,6 +4,7 @@ import { Button, TextField, Typography, Box } from '@material-ui/core';
 import axios from 'axios';
 import NavBar from '../../componets/navbar/navbar';
 import Logo from '../../images/logo.jpg';
+import { useHistory } from 'react-router-dom';
 
 function SignUpPage({ user, loginUser }) {
 
@@ -14,6 +15,12 @@ function SignUpPage({ user, loginUser }) {
   const [password, changePassword] = useState("");
   const [confirmedPassword, changeConfirmedPassword] = useState("");
   const [errors, changeErrors] = useState({});
+
+  const history = useHistory();
+
+  function redirect(path) {
+    history.push("/~cen4010_fa21_g11/project" + path);
+  }
 
   function ValidUserName() {
     if (!userName || userName.length < 3 || userName.length > 25) {
@@ -92,7 +99,7 @@ function SignUpPage({ user, loginUser }) {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:3000/~cen4010_fa21_g11/api/signup.php", {
+      const res = await axios.post("https://localhost:3000/~cen4010_fa21_g11/api/signup.php", {
         user: {
           email: email,
           firstname: firstName,
@@ -104,6 +111,7 @@ function SignUpPage({ user, loginUser }) {
       console.log("Created user");
       console.log(res.data);
       loginUser(res.data.user);
+      redirect("/");
     }
     catch(error) {
       console.log("Failed to create user", error?.response?.data);
@@ -112,8 +120,7 @@ function SignUpPage({ user, loginUser }) {
 
 
   const textFieldProps = {
-    required: true,
-    size: "large",
+    required: true, 
     style: {
       minWidth: 280,
       marginBottom: 20
