@@ -9,16 +9,7 @@ function NavBar({ user }) {
   const history = useHistory();
 
   function redirect(path) {
-    history.push(path);
-  }
-
-  //for testing when user is logged in
-  let devUser = {
-    firstName: "TempUser",
-    lastName: "LastName Temp user",
-    email: "tempuser@somehting.edu",
-    username: "temp_user",
-    verified: true
+    history.push("/~cen4010_fa21_g11/project" + path);
   }
 
   function userLoggedIn() {
@@ -49,7 +40,7 @@ function NavBar({ user }) {
         <MenuItem>
           <Box>
             <Typography style={{fontSize: 30}}>
-              Welcome, {devUser.firstName[0].toUpperCase() + devUser.firstName.substr(1).toLowerCase()}
+              Welcome, {user.firstName[0].toUpperCase() + user.firstName.substr(1).toLowerCase()}
             </Typography>
           </Box>
         </MenuItem>
@@ -79,11 +70,10 @@ function NavBar({ user }) {
   return (
     <AppBar position="static" style={{backgroundColor: "#4E4E4E"}}>
       <Toolbar>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="h2" className="beacon-blue" style={{fontWeight: "normal"}}>
-            Beacon
-          </Typography>
-        </Box>
+        <Typography onClick={() => redirect("/")} variant="h2" className="beacon-blue" style={{fontWeight: "normal", cursor: "pointer"}}>
+          Beacon
+        </Typography>
+        <Box sx={{ flexGrow: 1 }} />
         <Button style={{backgroundColor: "white", minWidth: 75, fontSize: "large"}} onClick={_ => redirect("/posts")}>
           Posts
         </Button>

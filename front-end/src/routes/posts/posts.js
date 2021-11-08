@@ -1,22 +1,47 @@
 import '../../main.css';
-import { Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Button, Box } from '@material-ui/core';
+import { useState, useEffect } from 'react';
+import NavBar from '../../componets/navbar/navbar';
+import Logo from '../../images/logo.jpg';
+import axios from 'axios';
 
 function PostsPage({ user }) {
+
+  const [posts, changePosts] = useState([]);
+  const [error, changeError] = useState(false);
+  const [courses, changeCourses] = useState([]);
+  
+  useEffect(() => {
+    GetCourses();
+  }, []);
+
+
+  async function GetCourses() {
+    try {
+      let res = await axios.get("https://localhost:3000/~cen4010_fa21_g11/api/getcourse.php");
+      if (res.data.error === false) {
+        console.log("Got response");
+        changeCourses(res.data.courses);
+      }
+    }  
+    catch(e) {
+      console.log(e);
+      console.log(e?.response?.data);
+    }
+  }
+
+
   return (
     <div>
-      <h1>Posts</h1>
+      <NavBar user={user} />
+      <Box style={{marginTop: 10}}>
+        <img src={Logo} alt="lighthouse" style={{maxWidth: "10%"}} />
+      </Box>
 
-      
 
 
 
-
-      <Link to="/">
-        <Button>
-          Home
-        </Button>
-      </Link>
+     
     </div>
   );
 }

@@ -7,11 +7,10 @@
   }
 
   function ValidateName($name) {
-    $len = strlen($name);
-    if (empty($name) || !is_string($name) || $len < 3) {
+    if (empty($name) || !is_string($name) || strlen($name) < 3 || strlen($name) > 20) {
       InvalidUserInput();
     }
-
+    $len = strlen($name);
     for ($i = 0; $i < $len; $i++) {
       if (!ctype_alpha($name[$i])) {
         InvalidUserInput();
@@ -95,11 +94,11 @@
       return FALSE;
     }
 
-    $query = sprintf("SELECT 1 FROM users WHERE cookie='%s' AND id='%s'", $conn->real_escape_string($session_token), $conn->real_escape_string($userID));
+    $query = sprintf("SELECT * FROM users WHERE cookie='%s' AND id='%s'", $conn->real_escape_string($session_token), $conn->real_escape_string($userID));
     $res = $conn->query($query);
 
     $conn->close();
-    return $res != FALSE;
+    return $res == TRUE;
   }
 
   function GetRandomString($len) {
