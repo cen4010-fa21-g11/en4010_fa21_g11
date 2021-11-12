@@ -87,20 +87,7 @@
       InvalidUserInput();
     }
   }
-
-  function ValidateUserSession($userID, $session_token) {
-    $conn = new mysqli($server, $username, $pwd, $db);
-    if ($conn->connect_error) {
-      return FALSE;
-    }
-
-    $query = sprintf("SELECT * FROM users WHERE cookie='%s' AND id='%s'", $conn->real_escape_string($session_token), $conn->real_escape_string($userID));
-    $res = $conn->query($query);
-
-    $conn->close();
-    return $res == TRUE;
-  }
-
+  
   function GetRandomString($len) {
     $chars = "abcdefghijklmnopqrstuvwzyz0123456789";
     $l = strlen($chars) - 1;

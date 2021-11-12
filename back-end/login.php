@@ -1,7 +1,6 @@
 <?php
   require '../../c.php';
-  require '../../validation.php';
-  
+
   header('Content-type: application/json');
 
   function InvalidCredentials() {
@@ -13,16 +12,33 @@
 
   if (empty($json)) {
     if (empty($_COOKIE) || empty($_COOKIE['userid']) || empty($_COOKIE['session_token'])) {
-      echo "Cookie is empty";
       InvalidCredentials();
     }
     
-    if (!ValidateUserSession($_COOKIE['userid'], $_COOKIE['session_token'])) {
+    $conn = new mysqli($server, $username, $pwd, $db);
+    if ($conn->connect_error) {
+      http_response_code(500);
+      exit(json_encode(array('error' => TRUE, 'message' => "Internal server error")));
+    }
+
+    $query = sprintf("SELECT * FROM users WHERE cookie='%s' AND id='%s'", $conn->real_escape_string($_COOKIE['session_token']), $conn->real_escape_string($_COOKIE['userid']));
+    $res = $conn->query($query);
+    $conn->close();
+
+    if (!$res || !$res->num_rows) {
       setcookie('userid', "", time() - 3600, '/');
       setcookie('session_token', "", time() - 3600, '/');
       InvalidCredentials();
     }
-    exit(json_encode(array('error' => FALSE)));
+    $user = $res->fetch_assoc();
+    exit(json_encode(array('error' => FALSE, 'user' => array(
+      'email' => $user['email'],
+      'username' => $user['username'],
+      'firstname' => $user['firstname'],
+      'lastname' => $user['lastname'],
+      'id' => $user['id'],
+      'collegeid' => $user['collegeid']
+    ))));
   }
 
   $json = json_decode($json);
@@ -71,7 +87,8 @@
     'firstname' => $row['firstname'],
     'lastname' => $row['lastname'],
     'username' => $row['username'],
-    'id' => $row['id']
+    'id' => $row['id'],
+    'collegeid' => $row['collegeid']
   )));
 
   $conn->close();

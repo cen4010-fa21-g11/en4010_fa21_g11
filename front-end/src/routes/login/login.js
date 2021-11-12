@@ -25,9 +25,9 @@ function LoginPage({ user, loginUser}) {
 
   async function CookieLogin() {
     console.log("Starting login with cookie");
-    if (user.validated || !CookiesSet()) {
-      if (user.validated) {
-        console.log("user is already validated");
+    if (user.verified || !CookiesSet()) {
+      if (user.verified) {
+        console.log("user is already verified");
       }
       else {
         console.log("Cookies are not set");
@@ -35,10 +35,10 @@ function LoginPage({ user, loginUser}) {
       return;
     }
     try {
-      const res = await axios.post("https://localhost:3000/~cen4010_fa21_g11/api/login.php");
+      const res = await axios.post("https://lamp.cse.fau.edu/~cen4010_fa21_g11/api/login.php");
       if (res.data.error === false) {
         let temp = res.data.user;
-        temp.validated = true;
+        temp.verified = true;
         loginUser(temp);
         console.log("Logged in the user");
         redirect("/");
@@ -50,7 +50,7 @@ function LoginPage({ user, loginUser}) {
     }
     catch(e) {
       console.log("Error with post request in login with cookie");
-      console.log("Response: ", e?.response?.data);
+      console.log("Response: ", e);
     }
   }
 
@@ -61,13 +61,13 @@ function LoginPage({ user, loginUser}) {
       return;
     }
     try {
-      const res = await axios.post("https://localhost:3000/~cen4010_fa21_g11/api/login.php", {
+      const res = await axios.post("https://lamp.cse.fau.edu/~cen4010_fa21_g11/api/login.php", {
         email: email,
         password: password
       });
       if (res.data.error === false) {
         let temp = res.data.user;
-        temp.validated = true;
+        temp.verified = true;
         loginUser(temp);
         redirect("/");
       }
