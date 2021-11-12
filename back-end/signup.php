@@ -63,6 +63,7 @@
     'firstname' => $firstName,
     'lastname' => $lastName,
     'id' => $userID,
+    'collegeid' => $collegeid
   )));
   $conn->close();
 ?>

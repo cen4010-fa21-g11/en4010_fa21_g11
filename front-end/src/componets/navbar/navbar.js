@@ -27,7 +27,6 @@ function NavBar({ user }) {
   const [anchor, changeAnchor] = useState(null);
   const open = Boolean(anchor);
 
-
   function getUserProfileButton() {
     return (
     <div>
@@ -40,7 +39,7 @@ function NavBar({ user }) {
         <MenuItem>
           <Box>
             <Typography style={{fontSize: 30}}>
-              Welcome, {user.firstName[0].toUpperCase() + user.firstName.substr(1).toLowerCase()}
+              Welcome, {user.firstname[0].toUpperCase() + user.firstname.substr(1).toLowerCase()}
             </Typography>
           </Box>
         </MenuItem>

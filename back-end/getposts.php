@@ -3,7 +3,7 @@
 
   header('Content-type: application/json');
 
-  if (empty($_GET) || empty($_GET['cid']) || empty($_COOKIE) || empty($_COOKIE['userid']) || empty($_COOKIE['session_token']) || empty($_COOKIE['pid'])) {
+  if (empty($_GET) || empty($_GET['courseid']) || empty($_COOKIE) || empty($_COOKIE['userid']) || empty($_COOKIE['session_token'])) {
     http_response_code(401);
     exit(json_encode(array('error' => TRUE, 'message' => "You do not have access")));
   }
@@ -26,7 +26,7 @@
 
   $user = $res->fetch_assoc();
 
-  $query = sprintf("SELECT * FROM posts WHERE id='%s' AND courseid='%s' AND collegeid='%s'", $conn->real_escape_string($_COOKIE['pid']) ,$conn->real_escape_string($_COOKIE['cid']), $conn->real_escape_string($user['collegeid']));
+  $query = sprintf("SELECT * FROM posts WHERE courseid='%s' AND collegeid='%s'", $conn->real_escape_string($_COOKIE['courseid']) , $conn->real_escape_string($user['collegeid']));
   
   $res = $conn->query($query);
   if (!$res) {
@@ -35,11 +35,13 @@
     exit(json_encode(array('error' => TRUE, 'message' => "This post does not exist")));
   }
 
-  $post = $res->fetch_assoc();
-  unset($post['collegeid']);
-  unset($post['courseid']);
-  $post['error'] = FALSE;
+  $posts = array();
+  while ($post = $res->fetch_assoc()) {
+    unset($post['collegeid']);
+    unset($post['courseid']);
+    array_push($posts, $post);
+  }
 
-  echo json_encode($post);
+  echo json_encode(array('error' => FALSE, 'posts' => $posts));
   $conn->close();
 ?>

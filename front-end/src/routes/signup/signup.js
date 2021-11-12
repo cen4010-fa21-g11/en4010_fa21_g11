@@ -99,7 +99,7 @@ function SignUpPage({ user, loginUser }) {
       return;
     }
     try {
-      const res = await axios.post("https://localhost:3000/~cen4010_fa21_g11/api/signup.php", {
+      const res = await axios.post("https://lamp.cse.fau.edu/~cen4010_fa21_g11/api/signup.php", {
         user: {
           email: email,
           firstname: firstName,
@@ -110,7 +110,9 @@ function SignUpPage({ user, loginUser }) {
       });
       console.log("Created user");
       console.log(res.data);
-      loginUser(res.data.user);
+      let user = res.data.user;
+      user.verified = true;
+      loginUser(user);
       redirect("/");
     }
     catch(error) {

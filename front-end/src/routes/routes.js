@@ -4,6 +4,7 @@ import HomePage from './homepage/homepage';
 import SignUpPage from './signup/signup';
 import LoginPage from './login/login';
 import PostsPage from './posts/posts';
+import CreatePostPage from './createpost/createpost';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 function Router() {
@@ -17,15 +18,21 @@ function Router() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/~cen4010_fa21_g11/project/signup" render={_ => <SignUpPage user={userInfo} loginUser={changeUserInfo} />} />
-        <Route path="/~cen4010_fa21_g11/project/login" render={_ => <LoginPage user={userInfo} loginUser={changeUserInfo} />} />
-        <Route path="/~cen4010_fa21_g11/project/posts" render={_ => {
+        <Route path="/~cen4010_fa21_g11/project/signup" render={() => <SignUpPage user={userInfo} loginUser={changeUserInfo} />} />
+        <Route path="/~cen4010_fa21_g11/project/login" render={() => <LoginPage user={userInfo} loginUser={changeUserInfo} />} />
+        <Route path="/~cen4010_fa21_g11/project/posts" render={() => {
           if (userLoggedIn()) {
             return <PostsPage user={userInfo} />
           }
           return <Redirect to="/~cen4010_fa21_g11/project/login" />
         }} />
-        <Route path="/~cen4010_fa21_g11/project/" render={_ => <HomePage user={userInfo} />} />
+        <Route path="/~cen4010_fa21_g11/project/createpost" render={() => {
+          if (userLoggedIn()) {
+            return <CreatePostPage user={userInfo} />
+          }
+          return <Redirect to="/~cen4010_fa21_g11/project/login" />
+        }} />
+        <Route path="/~cen4010_fa21_g11/project/" render={() => <HomePage user={userInfo} />} />
       </Switch>
     </BrowserRouter>
   );
