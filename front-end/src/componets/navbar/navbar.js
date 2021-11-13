@@ -49,6 +49,9 @@ function NavBar({ user }) {
         <MenuItem onClick={close}>
           My Posts
         </MenuItem>
+        <MenuItem onClick={() => redirect("/createpost")}>
+          Create Post
+        </MenuItem>
       </Menu>
     </div>)
   }

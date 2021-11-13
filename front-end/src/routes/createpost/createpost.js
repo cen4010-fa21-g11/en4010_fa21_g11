@@ -1,9 +1,10 @@
-
+import '../../main.css';
 import { useState, useEffect } from 'react';
 import NavBar from '../../componets/navbar/navbar';
-import { Box, Typography, Button, TextField, FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
+import { Box, Typography, Button, TextField, FormControl, Select, MenuItem, InputLabel, FormControlLabel, FormGroup, Checkbox } from '@material-ui/core';
 import Logo from '../../images/logo.jpg';
 import axios from 'axios';
+import { useHistory } from 'react-router';
 
 function CreatePostPage({ user }) {
 
@@ -12,7 +13,15 @@ function CreatePostPage({ user }) {
   const [selectedCourse, changeSelectedCourse] = useState("Null");
   const [courses, changeCourses] = useState([]);
   const [errors, changeErrors] = useState({});
+  const [createCourse, changeCreateCourse] = useState(false);
+  const [createCourseTitle, changeCreateCourseTitle] = useState("");
 
+  const history = useHistory();
+
+  function redirect(path) {
+    history.push("/~cen4010_fa21_g11/project" + path);
+  }
+  
   useEffect(() => {
     FetchCourses();
   }, []);
@@ -28,10 +37,6 @@ function CreatePostPage({ user }) {
     catch(e) {
       console.log(e);
     }
-  }
-
-  let devUser = {
-    collegeid: "fau"
   }
 
   const textFieldProps = {
@@ -51,8 +56,11 @@ function CreatePostPage({ user }) {
     if (text.length < 5 || text.length > 1000) {
       newErrors.text = "Text length must be between 5 and 1000 characters";
     }
-    if (!selectedCourse || selectedCourse === "Null") {
+    if ((!selectedCourse || selectedCourse === "Null") && !createCourse) {
       newErrors.course = "You must select a course";
+    }
+    if (createCourse && (!createCourseTitle || createCourseTitle.length < 5 || createCourseTitle.length > 50)) {
+      newErrors.createcourse = "Must provide a course title between 5 and 50 characters";
     }
 
     changeErrors(newErrors);
@@ -63,21 +71,57 @@ function CreatePostPage({ user }) {
   async function CreatePost() {
     if (!ValidateInput()) return;
     if (!user || !user.verified) return;
+
+    // needed as if we change selectedCourse, because it is a ll nhook wiot show
+    // properly later in the function as the change does not work for this scope
+    let currentCourse = selectedCourse;
+
+    //create the course
+    if (createCourse) {
+      try {
+        const res = await axios.post("https://lamp.cse.fau.edu/~cen4010_fa21_g11/api/createcourse.php", {
+          name: createCourseTitle
+        });
+        if (res.data.error === false) {
+          currentCourse = res.data.course.courseid;
+        }
+        else {
+          console.log("Error is true for creating course");
+          console.log(res);
+          return;
+        }
+      }
+      catch (e) {
+        console.log("Unable to create post");
+        console.log(e);
+        console.log(e?.response?.data);
+        return;
+      }
+    }
+
+    //create the post
     try {
+      console.log(currentCourse);
       const res = await axios.post("https://lamp.cse.fau.edu/~cen4010_fa21_g11/api/createpost.php", {
         title: title,
         text: text,
-        courseid: selectedCourse
+        courseid: currentCourse 
       });
-      if (res.data.errors === false) {
-        
+      if (res.data.error === false) {
+        console.log(res);
+        console.log("Created");
+        redirect("/posts");
+      }
+      else {
+        console.log("Error is true");
       }
     }
     catch(e) {
+      console.log("Error in create post");
       console.log(e);
+      console.log(e?.response?.data);
     }
   }
-
 
   return (
     <Box style={{marginBottom: 100}}>
@@ -85,7 +129,7 @@ function CreatePostPage({ user }) {
       <Box style={{display: "flex"}}>
         <img src={Logo} alt="lighthouse" style={{maxWidth: "10%", marginTop: 10}} />
         <Typography variant="h3" style={{flexGrow: 1, textAlign: "center", marginTop: 20, fontSize: 80}}>
-          Create a post at {devUser.collegeid.toUpperCase()}
+          Create a post at {user.collegeid.toUpperCase()}
         </Typography>
       </Box>
       <Box style={{marginTop: 30, textAlign: "center"}}>
@@ -105,7 +149,6 @@ function CreatePostPage({ user }) {
               value={selectedCourse}
               onChange={e => changeSelectedCourse(e.target.value)}
               error={errors.course ? true : false}
-              helperText={errors.course}
             >
               <MenuItem value={"Null"}>Null</MenuItem>
               {courses.map((course, index) => {
@@ -118,7 +161,18 @@ function CreatePostPage({ user }) {
             </Select>
           </FormControl>
         </Box>
-        <Button onClick={() => CreatePost()} style={{minWidth: 300, backgroundColor: "#7791F9", fontSize: 20}}>
+        <Box style={{marginTop: 20}}>
+          <Typography variant="h6">
+            Dont see the course?
+          </Typography>
+          <FormGroup style={{alignItems: "center", justifyContent: "center", textAlign: "center"}}>
+            <FormControlLabel control={<Checkbox checked={createCourse} style={{color: "#7791F9"}} onChange={e => changeCreateCourse(e.target.checked)} />} label="Create Course" />
+          </FormGroup>
+        </Box>
+        {createCourse && <Box style={{marginTop: 20}}>
+          <TextField {...textFieldProps} label="Course Name" error={errors.createcourse ? true : false} helperText={errors.createcourse} value={createCourseTitle} onChange={e => changeCreateCourseTitle(e.target.value)} />
+        </Box>}
+        <Button onClick={() => CreatePost()} style={{minWidth: 300, backgroundColor: "#7791F9", fontSize: 20, marginTop: 15}}>
           Create
         </Button>
       </Box>

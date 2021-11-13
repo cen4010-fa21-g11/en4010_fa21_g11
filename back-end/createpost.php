@@ -4,6 +4,7 @@
   define('KB', 1024);
   define('MB', 1048576);
 
+  //image upload not yet tested
   function UploadImage($conn, $collegeid, $courseid) {
     if ($_FILES['img']['error'] != UPLOAD_ERR_OK || $_FILES['img']['size'] == 0) {
       throw new Exception("Error with file uplod");
@@ -56,20 +57,21 @@
 
   $json = file_get_contents('php://input');
 
-  if (empty(json)) {
+  if (empty($json)) {
     http_response_code(400);
     exit(json_encode(array('error' => TRUE, 'message' => "Invalid user input")));
   }
 
   $json = json_decode($json);
 
-  if (empty($json) || empty($json->title) || empty($json->text) || empty($json->couseid)) {
+  if (empty($json) || empty($json->title) || empty($json->text) || empty($json->courseid)) {
     http_response_code(400);
     exit(json_encode(array('error' => TRUE, 'message' => "Invalid user input")));
   }
 
-  if (!is_string($json->title) || !is_string($json->text) || strlen($json->title) > 50 || strlen($json->text) > 1000 || strlen($json->courseid) != 13) {
+  if (!is_string($json->title) || !is_string($json->text) || !is_string($json->courseid) || strlen($json->title) > 50 || strlen($json->text) > 1000 || strlen($json->courseid) != 13 || strlen($json->text) < 5 || strlen($json->title) < 5) {
     http_response_code(400);
+    var_dump($json);
     exit(json_encode(array('error' => TRUE, 'message' => 'Invalid user input')));
   }
 
@@ -118,7 +120,7 @@
     exit(json_encode(array('error' => TRUE, 'message' => $imageError)));
   }
 
-  $query = sprintf("INSERT INTO posts (id, title, text, userid, image, courseid, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')", $postid, $conn->real_escape_string($json->title), $conn->real_escape_string($json->text), $user['id'], $imageID, $user['courseid'], $user['collegeid']);
+  $query = sprintf("INSERT INTO posts (id, title, text, userid, image, courseid, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $postid, $conn->real_escape_string($json->title), $conn->real_escape_string($json->text), $user['id'], $imageID, $conn->real_escape_string($json->courseid), $user['collegeid']);
 
   $res = $conn->query($query);
 

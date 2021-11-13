@@ -10,7 +10,7 @@
 
   $conn = new mysqli($server, $username, $pwd, $db);
 
-  if ($conn->connection_error) {
+  if ($conn->connect_error) {
     http_response_code(500);
     exit(json_encode(array('error' => TRUE, 'message' => "Internal Server Error")));
   }
@@ -26,10 +26,10 @@
 
   $user = $res->fetch_assoc();
 
-  $query = sprintf("SELECT * FROM posts WHERE courseid='%s' AND collegeid='%s'", $conn->real_escape_string($_COOKIE['courseid']) , $conn->real_escape_string($user['collegeid']));
+  $query = sprintf("SELECT * FROM posts WHERE courseid='%s' AND collegeid='%s'", $conn->real_escape_string($_GET['courseid']) , $conn->real_escape_string($user['collegeid']));
   
   $res = $conn->query($query);
-  if (!$res) {
+  if ($res === FALSE) {
     $conn->close();
     http_response_code(404);
     exit(json_encode(array('error' => TRUE, 'message' => "This post does not exist")));

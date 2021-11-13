@@ -1,5 +1,6 @@
 <?php
   require '../../c.php';
+  require '../../validation.php';
 
   header('Content-type: application/json');
 
@@ -79,8 +80,8 @@
   }
   
   //TO-DO figure out the route and change /~cen4010_fa21_g11/ to the proper route ex: /~cen4010_fa21_g11/final-project
-  setcookie('userid', $row['id'], time() + 604800, "/~cen4010_fa21_g11/project/", "lamp.cse.fau.edu", TRUE);
-  setcookie('session_token', $newSessionToken, time() + 604800, "/~cen4010_fa21_g11/project/", "lamp.cse.fau.edu", TRUE);
+  setcookie('userid', $row['id'], time() + 604800, "/~cen4010_fa21_g11/", "lamp.cse.fau.edu", TRUE);
+  setcookie('session_token', $newSessionToken, time() + 604800, "/~cen4010_fa21_g11/", "lamp.cse.fau.edu", TRUE);
 
   echo json_encode(array('error' => FALSE, 'user' => array(
     'email' => $row['email'],
