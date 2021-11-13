@@ -6,15 +6,22 @@ import Logo from '../../images/logo.jpg';
 import axios from 'axios';
 import ErrorScreen from '../../componets/errorscreen/errorscreen';
 import LoadingScreen from '../../componets/loadingscreen/loadingscreen';
+import { useHistory } from 'react-router';
 
 function PostsPage({ user }) {
   
   const [posts, changePosts] = useState([]);
   const [error, changeError] = useState(null);
   const [courses, changeCourses] = useState([]);
-  const [displayItem, changeDisplayItem] = useState("loading");
+  const [displayItem, changeDisplayItem] = useState("loading"); 
   const [currentCourse, changeCurrentCourse] = useState(null);
   
+  const history = useHistory();
+
+  function redirect(path) {
+    history.push("/~cen4010_fa21_g11/project" + path);
+  }
+
   useEffect(() => {
     GetCourses();
   }, []);
@@ -46,7 +53,9 @@ function PostsPage({ user }) {
   async function LoadPost(name, id) {
     try {
       const res = await axios.get("https://lamp.cse.fau.edu/~cen4010_fa21_g11/api/getposts.php", {
-        courseid: id
+        params: {
+          courseid: id
+        }
       });
       if (res.data.error === false) {
         changeCurrentCourse(name);
@@ -101,9 +110,32 @@ function PostsPage({ user }) {
   }
 
 
+  // make message better
+  function EmptyCourses() {
+    return (
+      <Box component="div" style={{textAlign: "center"}}>
+        <Typography variant="h2" style={{fontWeight: "normal"}}>
+          No Courses at your school
+        </Typography>
+        <Button style={{minWidth: 300, backgroundColor: "#7791F9", fontSize: 20, marginTop: 30}} onClick={() => redirect("/createpost")} >
+          Be the very first to create one
+        </Button>
+      </Box>
+    );
+  }
+
+
   function NormalScreen() {
+    if (error) {
+      return <ErrorScreen errorMsg={error} />
+    }
+
     if (displayItem === "loading") {
       return <LoadingScreen />
+    }
+
+    if (displayItem === "courses" && !courses.length) {
+      return <EmptyCourses />
     }
 
     if (displayItem === "courses") {
@@ -115,7 +147,6 @@ function PostsPage({ user }) {
     }
   }
 
-
   return (
     <Box>
       <NavBar user={user} />
@@ -123,12 +154,12 @@ function PostsPage({ user }) {
         <img src={Logo} alt="lighthouse" style={{maxWidth: "10%"}} />
         <Box style={{textAlign: "center", flexGrow: 1}}>
           <Typography variant="h2" style={{marginTop: 10, fontWeight: "normal"}}>
-            {error ? error : "Showing " + (posts.length ? `posts in ${currentCourse}` : "courses") + " at " + user.collegeid.toUpperCase()}
+            {error ? error : "Showing " + (displayItem === "posts" ? `posts in ${currentCourse}` : "courses") + " at " + user.collegeid.toUpperCase()}
           </Typography>
         </Box>
       </Box>
       
-      {error ? <ErrorScreen errorMsg={error} /> : NormalScreen()}
+      {NormalScreen()}
     </Box>
   );
 }

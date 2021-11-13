@@ -54,10 +54,10 @@
     InvalidUserInput();
   }
 
-  setcookie('email', $email, time() + 604800, "/~cen4010_fa21_g11/", "lamp.cse.fau.edu", TRUE);
+  setcookie('userid', $userID, time() + 604800, "/~cen4010_fa21_g11/", "lamp.cse.fau.edu", TRUE);
   setcookie('session_token', $sessionToken, time() + 604800, "/~cen4010_fa21_g11/", "lamp.cse.fau.edu", TRUE);
 
-  echo json_encode(array('error' => FALSE, array(
+  echo json_encode(array('error' => FALSE, 'user' => array(
     'email' => $email,
     'username' => $userName,
     'firstname' => $firstName,

@@ -110,13 +110,13 @@ function SignUpPage({ user, loginUser }) {
       });
       console.log("Created user");
       console.log(res.data);
-      let user = res.data.user;
-      user.verified = true;
-      loginUser(user);
+      let tempUser = res.data.user;
+      tempUser.verified = true;
+      loginUser(tempUser);
       redirect("/");
     }
     catch(error) {
-      console.log("Failed to create user", error?.response?.data);
+      console.log("Failed to create user", error);
     }
   }
 
