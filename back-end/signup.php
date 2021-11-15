@@ -45,7 +45,7 @@
   }
 
   $sessionToken = GetRandomString(30);
-  $query = sprintf("INSERT INTO users (firstname, lastname, id, email, password, username, cookie, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($firstName), $conn->real_escape_string($lastName), $conn->real_escape_string($userID), $conn->real_escape_string($email), $conn->real_escape_string($hashedPassword), $conn->real_escape_string($userName), $sessionToken, $conn->real_escape_string($collegeid));
+  $query = sprintf("INSERT INTO users (firstname, lastname, id, email, password, username, cookie, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($firstName), $conn->real_escape_string($lastName), $conn->real_escape_string($userID), $conn->real_escape_string($email), $conn->real_escape_string($hashedPassword), $conn->real_escape_string($userName), $conn->real_escape_string($sessionToken), $conn->real_escape_string($collegeid));
 
   $res = $conn->query($query);
 

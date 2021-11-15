@@ -70,7 +70,7 @@
   }
 
   $newSessionToken = GetRandomString(30);
-  $query = sprintf("UPDATE users SET cookie='%s' WHERE id='%s'", $newSessionToken, $row['id']);
+  $query = sprintf("UPDATE users SET cookie='%s' WHERE id='%s'", $conn->real_escape_string($newSessionToken), $conn->real_escape_string($row['id']));
   $res = $conn->query($query);
 
   if ($res == FALSE) {

@@ -24,7 +24,7 @@
   }
 
   $user = $res->fetch_assoc();
-  $query = sprintf("SELECT * FROM courses WHERE collegeid='%s'", $user['collegeid']);
+  $query = sprintf("SELECT * FROM courses WHERE collegeid='%s'", $conn->real_escape_string($user['collegeid']));
 
   $res = $conn->query($query);
 

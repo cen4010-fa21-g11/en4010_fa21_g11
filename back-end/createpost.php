@@ -4,7 +4,7 @@
   define('KB', 1024);
   define('MB', 1048576);
 
-  //image upload not yet tested
+  // image upload not yet tested
   function UploadImage($conn, $collegeid, $courseid) {
     if ($_FILES['img']['error'] != UPLOAD_ERR_OK || $_FILES['img']['size'] == 0) {
       throw new Exception("Error with file uplod");
@@ -39,7 +39,7 @@
       throw new Exception("Error in file");
     }
 
-    $query = sprintf("INSERT INTO images VALUES (imageid, imagepath, collegeid, courseid) VALUES ('%s', '%s' ,'%s', '%s')", $id, 'image/' . $name, $collegeid, $conn->real_escape_string($courseid));
+    $query = sprintf("INSERT INTO images VALUES (imageid, imagepath, collegeid, courseid) VALUES ('%s', '%s' ,'%s', '%s')", $id, $conn->real_escape_string('image/' . $name), $conn->real_escape_string($collegeid), $conn->real_escape_string($courseid));
     $res = $conn->query($query);
 
     if (!$res) {
@@ -120,7 +120,7 @@
     exit(json_encode(array('error' => TRUE, 'message' => $imageError)));
   }
 
-  $query = sprintf("INSERT INTO posts (id, title, text, userid, image, courseid, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $postid, $conn->real_escape_string($json->title), $conn->real_escape_string($json->text), $user['id'], $imageID, $conn->real_escape_string($json->courseid), $user['collegeid']);
+  $query = sprintf("INSERT INTO posts (id, title, text, userid, image, courseid, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($postid), $conn->real_escape_string($json->title), $conn->real_escape_string($json->text), $conn->real_escape_string($user['id']), $conn->real_escape_string($imageID), $conn->real_escape_string($json->courseid), $conn->real_escape_string($user['collegeid']));
 
   $res = $conn->query($query);
 
