@@ -33,7 +33,7 @@
 
   $user = $res->fetch_assoc();
 
-  $query = sprintf("SELECT * FROM images WHERE imageid='%s' AND collegeid='%s'", $conn->real_escape_string($_GET['id']), $user['collegeid']);
+  $query = sprintf("SELECT * FROM images WHERE imageid='%s' AND collegeid='%s'", $conn->real_escape_string($_GET['id']), $conn->real_escape_string($user['collegeid']));
 
   $res = $conn->query($query);
 
