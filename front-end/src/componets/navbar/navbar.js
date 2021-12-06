@@ -4,12 +4,17 @@ import { AppBar, Box, Toolbar, Typography, Button, Fade, Menu, MenuItem } from '
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useHistory } from 'react-router-dom';
 
-function NavBar({ user }) {
+function NavBar({ user, reset = null }) {
 
   const history = useHistory();
 
   function redirect(path) {
-    history.push("/~cen4010_fa21_g11/project" + path);
+    if (path === "/posts" && reset) {
+      reset(true);
+    }
+    else {
+      history.push("/~cen4010_fa21_g11/project" + path);
+    }
   }
 
   function userLoggedIn() {
