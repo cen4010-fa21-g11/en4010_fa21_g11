@@ -51,7 +51,7 @@
 
   // craft query string for creating course
   // again must sanitize the data
-  $query = sprintf("INSERT INTO courses (courseid, name, collegeid) VALUES ('%s', '%s', '%s')", $conn->real_escape_string($courseID), $conn->real_escape_string($json->name), $conn->real_escape_string($user['collegeid']));
+  $query = sprintf("INSERT INTO courses (courseid, name, collegeid) VALUES ('%s', '%s', '%s')", $conn->real_escape_string($courseID), $conn->real_escape_string(htmlspecialchars($json->name)), $conn->real_escape_string($user['collegeid']));
 
   // execute that query
   $res = $conn->query($query);

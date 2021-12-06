@@ -120,7 +120,7 @@
     exit(json_encode(array('error' => TRUE, 'message' => $imageError)));
   }
 
-  $query = sprintf("INSERT INTO posts (id, title, text, userid, image, courseid, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($postid), $conn->real_escape_string($json->title), $conn->real_escape_string($json->text), $conn->real_escape_string($user['id']), $conn->real_escape_string($imageID), $conn->real_escape_string($json->courseid), $conn->real_escape_string($user['collegeid']));
+  $query = sprintf("INSERT INTO posts (id, title, text, userid, image, courseid, collegeid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')", $conn->real_escape_string($postid), $conn->real_escape_string(htmlspecialchars($json->title)), $conn->real_escape_string(htmlspecialchars($json->text)), $conn->real_escape_string($user['id']), $conn->real_escape_string($imageID), $conn->real_escape_string($json->courseid), $conn->real_escape_string($user['collegeid']));
 
   $res = $conn->query($query);
 
